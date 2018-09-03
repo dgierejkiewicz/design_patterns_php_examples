@@ -180,8 +180,7 @@ abstract class AbstractTransaction implements Transactionable
 
     public function restoreFromMemento()
     {
-        $memento = $this->getMemento();
-        $this->subject = $memento->getSubject();
+        $this->subject = $this->getMemento()->getSubject();
     }
 
     public function tryOperation()
@@ -201,7 +200,6 @@ class Transaction extends AbstractTransaction
 class TransactionChain implements TransactionChainable
 {
     private $chain;
-    private $autoRollback = true;
 
 
     /**
@@ -209,11 +207,10 @@ class TransactionChain implements TransactionChainable
      *
      * @param bool $autoRollback
      */
-    public function __construct($autoRollback = true)
+    public function __construct()
     {
         $this->registerShutdown();
         $this->chain = new SplDoublyLinkedList();
-        $this->autoRollback = $autoRollback;
     }
 
     public function addTransactionable(Transactionable $transactionable)
