@@ -87,6 +87,8 @@ abstract class AbstractTransaction implements Transactionable
         $this->processor = $processor;
     }
 
+    abstract public static function getInstance();
+
     /**
      * @return mixed
      */
@@ -193,7 +195,10 @@ abstract class AbstractTransaction implements Transactionable
 
 class Transaction extends AbstractTransaction
 {
-
+    public static function getInstance()
+    {
+        return new self();
+    }
 }
 
 
@@ -275,17 +280,17 @@ $sub3->id = 3;
 $processor = new Processor();
 
 
-$transactionCall = new TransactionChain(true);
-$transactionCall
+$transactionChain = new TransactionChain(true);
+$transactionChain
     ->addTransactionable(new Transaction($sub1, $processor))
     ->addTransactionable(new Transaction($sub2, $processor))
     ->addTransactionable(new Transaction($sub3, $processor));
 
-print_r($transactionCall);
+print_r($transactionChain);
 
-$transaction_status = $transactionCall->commit();
+$transaction_status = $transactionChain->commit();
 
-print_r($transactionCall);
+print_r($transactionChain);
 
 var_dump($transaction_status);
 
