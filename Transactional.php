@@ -8,7 +8,7 @@ interface Processiable
 
 interface Transactionable
 {
-    public function tryOperation();
+    public function tryOperation(): bool;
 
     public function operation();
 
@@ -19,7 +19,7 @@ interface Transactionable
 
 interface TransactionChainable
 {
-    public function commit();
+    public function commit(): bool;
 
     public function rollback();
 }
@@ -185,7 +185,7 @@ abstract class AbstractTransaction implements Transactionable
         $this->subject = $this->getMemento()->getSubject();
     }
 
-    public function tryOperation()
+    public function tryOperation(): bool
     {
         $this->operation();
         return $this->isState();
@@ -225,7 +225,7 @@ class TransactionChain implements TransactionChainable
         return $this;
     }
 
-    public function commit()
+    public function commit(): bool
     {
         $this->chain->rewind();
         while ($this->chain->valid()) {
