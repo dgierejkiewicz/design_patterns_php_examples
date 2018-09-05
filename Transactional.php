@@ -1,5 +1,7 @@
 <?php
 
+namespace DesignPatterns;
+
 interface Processiable
 {
     public function process($subject);
