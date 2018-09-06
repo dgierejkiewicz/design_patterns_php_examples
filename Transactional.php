@@ -26,7 +26,7 @@ interface TransactionChainable
     public function rollback();
 }
 
-class AbstractSubject extends stdClass
+class AbstractSubject extends \stdClass
 {
 
 }
@@ -203,10 +203,16 @@ class Transaction extends AbstractTransaction
     }
 }
 
+class State
+{
+    const ROLLING   = 'rolling';
+    const IDLE      = 'idle';
+}
 
 class TransactionChain implements TransactionChainable
 {
     private $chain;
+    private $state;
 
 
     /**
@@ -217,7 +223,8 @@ class TransactionChain implements TransactionChainable
     public function __construct()
     {
         $this->registerShutdown();
-        $this->chain = new SplDoublyLinkedList();
+        $this->chain = new \SplDoublyLinkedList();
+        $this->state = State::IDLE;
     }
 
     public function addTransactionable(Transactionable $transactionable)
@@ -229,6 +236,7 @@ class TransactionChain implements TransactionChainable
 
     public function commit(): bool
     {
+        $this->state = State::ROLLING;
         $this->chain->rewind();
         while ($this->chain->valid()) {
 
@@ -242,6 +250,7 @@ class TransactionChain implements TransactionChainable
 
             $this->chain->next();
         }
+        $this->state = State::IDLE;
         return true;
     }
 
